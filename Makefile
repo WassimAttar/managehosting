@@ -1,5 +1,3 @@
-all: managehosting README.md
-
 clean:
 	rm -rf managehosting managehosting.tar.gz
 	find . -name "*.pyc" -delete
