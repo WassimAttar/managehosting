@@ -20,7 +20,7 @@ tar:
 		README.md \
 		Makefile \
 
-managehosting: *.py
+managehosting:
 	zip --quiet managehosting *.py
 	echo '#!$(PYTHON)' > managehosting
 	cat managehosting.zip >> managehosting
