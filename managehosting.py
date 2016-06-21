@@ -74,6 +74,10 @@ services = []
 linuxInstance = Linux(params)
 services.append(linuxInstance)
 
+if args.withsql > 0 or args.delete > 0 :
+	mysqlInstance = Mysql(params,linuxInstance)
+	services.append(mysqlInstance)
+
 if args.withftp > 0 or args.delete > 0 :
 	if args.withsql == 0 :
 		mysqlInstance = Mysql(params,linuxInstance)
@@ -89,10 +93,6 @@ apache2Instance = Apache2(params,linuxInstance)
 services.append(apache2Instance)
 displayInstance = DisplayConf(params)
 services.append(rightsInstance)
-
-if args.withsql > 0 or args.delete > 0 :
-	mysqlInstance = Mysql(params,linuxInstance)
-	services.append(mysqlInstance)
 
 # pas service : display
 # services : linux rights apache2 mysql pureftp ssh
