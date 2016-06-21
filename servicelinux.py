@@ -11,7 +11,7 @@ class Linux :
 		if self.__params.get("verbose") :
 			print(command)
 		if self.__params.get("execute") :
-			subprocess.call(command)
+			subprocess.call(command, shell=True)
 
 	def generateRandomString(self,size) :
 		return ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(size)])
