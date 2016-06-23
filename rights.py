@@ -8,10 +8,11 @@ class Rights :
 		self.__exist = False
 		self.__params = params
 		self.__Linux = Linux
+		self.__rights = Rights.__rights
 
 	def __del__(self):
 		if self.__params.get("action") == "create" and not self.__exist :
-			self.__Linux.executeShellCommand("sh "+Rights.__rights)
+			self.__Linux.executeShellCommand("sh "+self.__rights)
 
 	def exist(self):
 		cmd = "chown -R {0}:{0} {1}".format(self.__params.get("account"),self.__params.get("hostingPath"))
