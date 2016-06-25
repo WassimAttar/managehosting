@@ -1,6 +1,6 @@
 clean:
-	rm -rf managehosting managehosting.tar.gz ../build/
-	find ../manage_hosting/ -name "*.pyc" -delete
+	rm -rf managehosting managehosting.* managehosting.tar.gz ../build/
+	find ../manage_hosting -name "*.pyc" -delete
 
 PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
@@ -18,8 +18,10 @@ managehosting.tar.gz:
 		../README.md \
 
 managehosting:
-	zip --quiet managehosting ../manage_hosting/*.py
-	echo '#!$(PYTHON)' > managehosting
-	cat managehosting.zip >> managehosting
-	rm managehosting.zip
-	chmod a+x managehosting
+	cd ../manage_hosting && \
+	zip --quiet managehosting *.py && \
+	echo '#!$(PYTHON)' > managehosting && \
+	cat managehosting.zip >> managehosting && \
+	rm managehosting.zip && \
+	chmod a+x managehosting && \
+	mv managehosting ../releasescripts/
