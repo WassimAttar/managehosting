@@ -14,6 +14,9 @@ class Update :
 		except Exception:
 			print('ERROR: can\'t find the current version. Please try again later.')
 			exit()
+		if len(self.__data) == 2 :
+			print('ERROR: No release')
+			exit()
 
 	def update(self) :
 		parsedjson = json.loads(self.__data)
