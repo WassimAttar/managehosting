@@ -10,6 +10,7 @@ from serviceapache2 import Apache2
 from rights import Rights
 from displayconf import DisplayConf
 from update import Update
+from version import __version__
 
 parser = argparse.ArgumentParser(description='Create Hosting')
 parser.add_argument('-a','--account', type=str, default="", help='linux, mysql, path atc... accounts')
@@ -24,12 +25,16 @@ parser.add_argument('-s', '--withssh', action='count', default=0, help='With Ssh
 parser.add_argument('-w', '--withwww', action='count', default=0, help='Add server alias www')
 parser.add_argument('-r', '--documentroot', type=str, default="", help='Document Root')
 parser.add_argument('-U', '--update', action='store_true', help='Update')
+parser.add_argument('-V', '--version', action='store_true', help='Version')
 args = parser.parse_args()
+
+if args.version :
+	print(__version__)
+	exit()
 
 if args.withftp == 0 and args.withssh == 0 and args.create > 0 :
 	print("Please choose a hosting option. Ex : --withftp")
 	exit()
-
 
 if args.account == "" and args.update == False :
 	print("Please choose an account.")

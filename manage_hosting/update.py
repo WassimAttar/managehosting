@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import urllib2, json
-from version import __version__
 
 class Update :
 
