@@ -10,7 +10,7 @@ install: managehosting
 	install -d $(BINDIR)
 	install -m 755 managehosting $(BINDIR)
 
-tar:
+managehosting.tar.gz:
 	@tar -czf managehosting.tar.gz --owner 0 --group 0 \
 		--exclude '*.pyc' \
 		-- \
