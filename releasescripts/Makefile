@@ -15,7 +15,7 @@ managehosting.tar.gz:
 		--exclude '*.pyc' \
 		-- \
 		../manage_hosting/*.py \
-		README.md \
+		../README.md \
 
 managehosting:
 	zip --quiet managehosting ../manage_hosting/*.py
