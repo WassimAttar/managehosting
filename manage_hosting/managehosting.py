@@ -35,7 +35,7 @@ if args.account == "" and args.update == False :
 	print("Please choose an account.")
 	exit()
 
-if args.create == 0 and args.delete == 0:
+if args.create == 0 and args.delete == 0 and args.update == False :
 	print("Please choose an action. Ex : --create")
 	exit()
 
