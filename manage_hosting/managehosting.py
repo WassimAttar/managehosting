@@ -46,6 +46,7 @@ if args.create == 0 and args.delete == 0 and args.update == False :
 
 
 params = {}
+params["version"] = __version__
 params["account"] = args.account
 
 if args.domain == "" :
@@ -95,7 +96,7 @@ linuxInstance = Linux(params)
 services.append(linuxInstance)
 
 if args.update :
-	updateInstance = Update(linuxInstance)
+	updateInstance = Update(params,linuxInstance)
 	updateInstance.update()
 	exit()
 

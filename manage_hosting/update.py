@@ -6,7 +6,8 @@ class Update :
 
 	__API_URL = "https://api.github.com/repos/WassimAttar/managehosting/releases"
 
-	def __init__(self,Linux) :
+	def __init__(self,params,Linux) :
+		self.__params = params
 		self.__Linux = Linux
 		try :
 			self.__data = urllib2.urlopen(Update.__API_URL,timeout = 3).read()
@@ -20,8 +21,8 @@ class Update :
 	def update(self) :
 		parsedjson = json.loads(self.__data)
 		newversion = parsedjson[0]["tag_name"]
-		if newversion == __version__ :
-			print('managehosting is up-to-date (' + __version__ + ')')
+		if newversion == self.__params.get("version") :
+			print('managehosting is up-to-date (' + self.__params.get("version") + ')')
 			exit()
 
 		if parsedjson[0]["assets"][0]["name"] == "managehosting" :
