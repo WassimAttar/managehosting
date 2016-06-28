@@ -11,7 +11,7 @@ if test "$major_version" '!=' "$(date '+%Y.%m.%d')"; then
 fi
 
 if [ ! -z "`git tag | grep "$version"`" ]; then echo 'ERROR: version already present'; exit 1; fi
-# if [ ! -z "`git status --porcelain | grep -v CHANGELOG`" ]; then echo 'ERROR: the working directory is not clean; commit or stash changes'; exit 1; fi
+if [ ! -z "`git status --porcelain | grep -v CHANGELOG`" ]; then echo 'ERROR: the working directory is not clean; commit or stash changes'; exit 1; fi
 useless_files=$(find manage_hosting/ -type f -not -name '*.py')
 if [ ! -z "$useless_files" ]; then echo "ERROR: Non-.py files in managehosting: $useless_files"; exit 1; fi
 
