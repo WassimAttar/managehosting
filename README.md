@@ -21,20 +21,23 @@ classes for nginx, proftpd, postgres, etc... are easy to create.
 
 ### OPTIONS
 
+    --account				The account name of the hosting.
     --domain				The domain name of the hosting.
     --withwww				Adds www. to the domain name.
     --withsql				Creates the Mysql account.
     --withftp				Creates the Pureftp account.
     --withssh				Creates the ssh/sftp account.
-    --create				Create accounts
-    --delete				Delete accounts
-    --execute				Execute command. If not used, it's a dry run
-    -v						Verbose mode. All details about the accounts creation
+    --create				Create accounts.
+    --delete				Delete accounts.
+    --execute				Execute command. If not used, it's a dry run.
+    -v						Verbose mode. All details about the accounts creation.
+    -V						Version.
+    -U						Update to latest release.
 
 ### USE CASES
 Create hosting for the domain www.johndoe.com with ftp and mysql accounts
 
-    python managehosting.py johndoe --domain johndoe.com --withwww --withsql --withftp --create --execute
+    ./managehosting --account johndoe --domain johndoe.com --withwww --withsql --withftp --create --execute
 
 Output
 
@@ -55,7 +58,7 @@ Output
 
 Create hosting for the domain www.johndoe.com with ssh/sftp and mysql accounts
 
-    python managehosting.py johndoe --domain johndoe.com --withwww --withsql --withssh --create --execute
+    ./managehosting --account johndoe --domain johndoe.com --withwww --withsql --withssh --create --execute
 
 Output
 
@@ -75,7 +78,7 @@ Output
 
 Create hosting for a static application for the domain johndoe.com with only ftp account
 
-    python managehosting.py johndoe --domain johndoe.com --withftp --create --execute
+    ./managehosting --account johndoe --domain johndoe.com --withftp --create --execute
 
 Output
 
@@ -90,7 +93,7 @@ Output
 
 Create hosting without domain name but with ssh/sftp and mysql accounts
 
-    python managehosting.py johndoe --withsql --withssh --create --execute
+    ./managehosting --account johndoe --withsql --withssh --create --execute
 
 Output
 
@@ -111,7 +114,7 @@ Output
 
 Delete hosting for the domain www.johndoe.com
 
-    python managehosting.py johndoe --domain www.johndoe.com --delete --execute
+    ./managehosting --account johndoe --domain www.johndoe.com --delete --execute
 
 Output
 
@@ -120,3 +123,20 @@ Output
 		Account johndoe and Domain www.johndoe.com deleted
 
 		##########################
+
+Get version
+
+    ./managehosting -V
+
+Output
+
+    2016.06.29
+
+Update to latest release
+
+    ./managehosting -U
+
+Output
+
+    Updating to version 2016.06.30
+    Updated managehosting. Restart managehosting to use the new version.
