@@ -6,9 +6,8 @@ class Update :
 
 	__API_URL = "https://api.github.com/repos/WassimAttar/managehosting/releases"
 
-	def __init__(self,params,Linux) :
+	def __init__(self,params) :
 		self.__params = params
-		self.__Linux = Linux
 		try :
 			self.__data = urllib2.urlopen(Update.__API_URL,timeout = 3).read()
 		except Exception:
@@ -28,5 +27,7 @@ class Update :
 		if parsedjson[0]["assets"][0]["name"] == "managehosting" :
 			latesturl = parsedjson[0]["assets"][0]["browser_download_url"]
 			print('Updating to version ' + newversion + ' ...')
-			self.__Linux.executeShellCommand("wget -O managehosting "+latesturl)
+			f = open("managehosting", 'wb')
+			f.write(urllib2.urlopen(latesturl,timeout = 3).read())
+			f.close()
 			print('Updated managehosting. Restart managehosting to use the new version.')
