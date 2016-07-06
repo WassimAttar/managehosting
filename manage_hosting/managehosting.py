@@ -96,7 +96,7 @@ linuxInstance = Linux(params)
 services.append(linuxInstance)
 
 if args.update :
-	updateInstance = Update(params,linuxInstance)
+	updateInstance = Update(params)
 	updateInstance.update()
 	exit()
 
