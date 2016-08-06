@@ -74,9 +74,13 @@ else :
 
 if args.withftp > 0 :
 	params["hostingPath"] = Pureftp.getHostingPath(params.get("account"))
+	params["hostingPathVhost"] = params["hostingPath"]
+	params["documentRootVhost"] = params["documentRoot"]
 
 if args.withssh > 0 :
 	params["hostingPath"] = Ssh.getHostingPath(params.get("account"))
+	params["hostingPathVhost"] = Ssh.getHostingPathVhost(params.get("account"),params["domain"])
+	params["documentRootVhost"] = Ssh.getdocumentRootVhost(params.get("documentRoot"),params["domain"])
 
 if args.create > 0 :
 	params["action"] = "create"

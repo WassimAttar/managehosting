@@ -24,7 +24,7 @@ class Apache2() :
      Require all granted
     </Directory>
 
-  <DirectoryMatch "/(cache|upload)/">
+  <DirectoryMatch "{0}/(cache|upload)/">
     php_flag engine off
   </DirectoryMatch>
 
@@ -81,15 +81,17 @@ class Apache2() :
 			serverAlias = "ServerAlias www.{0}".format(self.__params.get("domain"))
 		else :
 			serverAlias = ""
-		documentRoot = self.__params.get("hostingPath")+self.__params.get("documentRoot")
-		openBaseDir = documentRoot
+		documentRootVhost = self.__params.get("hostingPathVhost")+self.__params.get("documentRootVhost")
+		openBaseDirVhost = documentRootVhost
 		if self.__params.get("documentRoot") != "" :
+			openBaseDirVhost = openBaseDirVhost.replace("/web","")
+			openBaseDir = self.__params.get("hostingPath")+self.__params.get("documentRoot")
 			openBaseDir = openBaseDir.replace("/web","")
 			self.__Linux.executeShellCommand("mkdir {0}".format(openBaseDir))
 		if self.__params.get("domain") == "" :
-			apacheConf = Apache2.__apacheTemplateNoDomain.format(documentRoot,self.__params.get("account"),openBaseDir)
+			apacheConf = Apache2.__apacheTemplateNoDomain.format(documentRootVhost,self.__params.get("account"),openBaseDirVhost)
 		else :
-			apacheConf = Apache2.__apacheTemplate.format(documentRoot,self.__params.get("account"),self.__params.get("domain"),serverAlias,openBaseDir)
+			apacheConf = Apache2.__apacheTemplate.format(documentRootVhost,self.__params.get("account"),self.__params.get("domain"),serverAlias,openBaseDirVhost)
 		if self.__params.get("verbose") :
 			print(apacheConf)
 		if self.__params.get("execute") :

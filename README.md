@@ -93,7 +93,7 @@ Output
 
 Create hosting without domain name but with ssh/sftp and mysql accounts
 
-    ./managehosting --account johndoe --withsql --withssh --create --execute
+    ./managehosting --account johndoe --withsql --withssh --documentroot /www --create --execute
 
 Output
 
@@ -101,6 +101,26 @@ Output
 		http://xxx.xxx.xxx.xxx/johndoe
 
 		ssh :
+		ip : xxx.xxx.xxx.xxx
+		login : johndoe
+		pass : Jf29ufOYALAL
+
+		Database :
+		http://xxx.xxx.xxx.xxx/phpmyadmin/
+		login : johndoe
+		pass : dD1M1TXEWGKX
+		##########################
+
+Create hosting without domain name but with ftp and mysql accounts
+
+    ./managehosting --account johndoe --withsql --withftp --create --execute
+
+Output
+
+		##########################
+		http://xxx.xxx.xxx.xxx/johndoe
+
+		ftp :
 		ip : xxx.xxx.xxx.xxx
 		login : johndoe
 		pass : Jf29ufOYALAL
