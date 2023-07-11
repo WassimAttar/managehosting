@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import base64, json, mimetypes, netrc, argparse, os, urllib.request
+import base64, json, mimetypes, netrc, argparse, os, urllib.request, getpass
 
 def sanitize_url(url):
 	return 'http:%s' % url if url.startswith('//') else url
