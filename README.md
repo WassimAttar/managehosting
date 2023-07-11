@@ -11,10 +11,10 @@ Command-line program to create web hosting : ssh, ftp, mysql etc... accounts and
 Works with python 2.
 
 To run, below services must be installed on a linux box
-apache
-mysql
-pureftp
-phpmyadmin
+ - apache
+ - mysql
+ - pureftp
+ - phpmyadmin
 
 Each service has its own class so it can be extensible.
 classes for nginx, proftpd, postgres, etc... are easy to create.

@@ -3,9 +3,9 @@
 import re
 
 try:
-	import mysql.connector
+	import MySQLdb
 except ImportError:
-	print("Please install mysql.connector")
+	print("Please install MySQLdb")
 	exit()
 
 class Mysql() :
@@ -26,13 +26,13 @@ pass : {2}
 
 	def __del__(self):
 		try :
-			self.__mysqlInstance.close()
+			self.mysqlInstance.close()
 		except :
 			pass
 
 	def __createMysqlInstance(self) :
 		mysqlRootPassword = self.__getMysqlRootPassword()
-		self.mysqlInstance = mysql.connector.connect(host="localhost",user="root",password=mysqlRootPassword)
+		self.mysqlInstance = MySQLdb.connect(host="localhost",user="root",password=mysqlRootPassword)
 
 	def __getMysqlRootPassword(self) :
 		try :
@@ -50,7 +50,7 @@ Example :
 [client]
 password=p4ssw0rD
 Protect this file
-chmod 600 {0}""".format(mysqlConfFile))
+chmod 600 {0}""".format(Mysql.__mysqlConfFile))
 			exit()
 
 	def executeSqlRequest(self,cursor,request) :
@@ -73,32 +73,31 @@ chmod 600 {0}""".format(mysqlConfFile))
 
 	def create(self) :
 		mysqlPassword = self.__Linux.generateRandomString(12)
-		query = """
-CREATE USER '{0}'@'localhost' IDENTIFIED BY '{1}';
-GRANT USAGE ON * . * TO '{0}'@'localhost' IDENTIFIED BY '{1}' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
-CREATE DATABASE IF NOT EXISTS `{0}` ;
-GRANT ALL PRIVILEGES ON `{0}` . * TO '{0}'@'localhost';
-""".format(self.__params.get("account"),mysqlPassword)
-		if self.__params.get("verbose") :
-			print(query)
-		if self.__params.get("execute") :
-			cursor = self.mysqlInstance.cursor()
-			for result in cursor.execute(query, multi=True):
-				pass
-		return Mysql.__createConfTemplate.format(self.__params.get('ip'),self.__params.get('account'),mysqlPassword)
+		queries = ("CREATE USER '{0}'@'localhost' IDENTIFIED BY '{1}'",
+                    "GRANT USAGE ON * . * TO '{0}'@'localhost' IDENTIFIED BY '{1}' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0",
+                    "CREATE DATABASE IF NOT EXISTS `{0}`",
+                    "GRANT ALL PRIVILEGES ON `{0}` . * TO '{0}'@'localhost'")
+		for query in queries :
+			query = query.format(self.__params.get("account"),mysqlPassword)
+			if self.__params.get("verbose") :
+				print(query)
+			if self.__params.get("execute") :
+				cursor = self.mysqlInstance.cursor()
+				cursor.execute(query)
+			return Mysql.__createConfTemplate.format(self.__params.get('ip'),self.__params.get('account'),mysqlPassword)
 
 	def delete(self) :
-		query = """
-DROP USER '{0}'@'localhost';
-DROP DATABASE IF EXISTS `{0}` ;
-""".format(self.__params.get("account"))
-		if self.__params.get("verbose") :
-			print(query)
-		if self.__params.get("execute") :
-			try :
-				cursor = self.mysqlInstance.cursor()
-				for result in cursor.execute(query, multi=True):
-					pass
-			except mysql.connector.errors.DatabaseError :
-				print("Base déjà supprimée")
-		return ""
+		queries = ("DROP USER '{0}'@'localhost'",
+                           "DROP DATABASE IF EXISTS `{0}`"
+			)
+		for query in queries :
+			query = query.format(self.__params.get("account"))
+			if self.__params.get("verbose") :
+				print(query)
+			if self.__params.get("execute") :
+				try :
+					cursor = self.mysqlInstance.cursor()
+					cursor.execute(query)
+				except :
+					print("Base déjà supprimée")
+			return ""

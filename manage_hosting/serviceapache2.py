@@ -67,7 +67,7 @@ class Apache2() :
 		self.__Linux.executeShellCommand("a2dissite "+self.__confFile+".conf")
 
 	def __reloadApache(self) :
-		self.__Linux.executeShellCommand("service apache2 reload")
+		self.__Linux.executeShellCommand("systemctl reload apache2")
 
 	def exist(self):
 		if os.path.exists(self.__apacheConfFile) :
@@ -82,16 +82,13 @@ class Apache2() :
 		else :
 			serverAlias = ""
 		documentRootVhost = self.__params.get("hostingPathVhost")+self.__params.get("documentRootVhost")
-		openBaseDirVhost = documentRootVhost
-		if self.__params.get("documentRoot") != "" :
-			openBaseDirVhost = openBaseDirVhost.replace("/web","")
-			openBaseDir = self.__params.get("hostingPath")+self.__params.get("documentRoot")
-			openBaseDir = openBaseDir.replace("/web","")
-			self.__Linux.executeShellCommand("mkdir {0}".format(openBaseDir))
+		openBaseDir = self.__params.get("hostingPath")
+		if not os.path.isdir(documentRootVhost) :
+			self.__Linux.executeShellCommand("mkdir {0}".format(documentRootVhost))
 		if self.__params.get("domain") == "" :
-			apacheConf = Apache2.__apacheTemplateNoDomain.format(documentRootVhost,self.__params.get("account"),openBaseDirVhost)
+			apacheConf = Apache2.__apacheTemplateNoDomain.format(documentRootVhost,self.__params.get("account"),openBaseDir)
 		else :
-			apacheConf = Apache2.__apacheTemplate.format(documentRootVhost,self.__params.get("account"),self.__params.get("domain"),serverAlias,openBaseDirVhost)
+			apacheConf = Apache2.__apacheTemplate.format(documentRootVhost,self.__params.get("account"),self.__params.get("domain"),serverAlias,openBaseDir)
 		if self.__params.get("verbose") :
 			print(apacheConf)
 		if self.__params.get("execute") :

@@ -78,6 +78,8 @@ if args.withftp > 0 :
 	params["documentRootVhost"] = params["documentRoot"]
 
 if args.withssh > 0 :
+	if params["documentRoot"] == "" :
+		params["documentRoot"] = "/www"
 	params["hostingPath"] = Ssh.getHostingPath(params.get("account"))
 	params["hostingPathVhost"] = Ssh.getHostingPathVhost(params.get("account"),params["domain"])
 	params["documentRootVhost"] = Ssh.getdocumentRootVhost(params.get("documentRoot"),params["domain"])

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import urllib2, json
+import urllib3, json
 
 class Update :
 
@@ -9,7 +9,7 @@ class Update :
 	def __init__(self,params) :
 		self.__params = params
 		try :
-			self.__data = urllib2.urlopen(Update.__API_URL,timeout = 3).read()
+			self.__data = urllib3.urlopen(Update.__API_URL,timeout = 3).read()
 		except Exception:
 			print('ERROR: can\'t find the current version. Please try again later.')
 			exit()
@@ -28,6 +28,6 @@ class Update :
 			latesturl = parsedjson[0]["assets"][0]["browser_download_url"]
 			print('Updating to version ' + newversion + ' ...')
 			f = open("managehosting", 'wb')
-			f.write(urllib2.urlopen(latesturl,timeout = 3).read())
+			f.write(urllib3.urlopen(latesturl,timeout = 3).read())
 			f.close()
 			print('Updated managehosting. Restart managehosting to use the new version.')

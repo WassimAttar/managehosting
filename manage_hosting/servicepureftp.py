@@ -10,7 +10,7 @@ ftp :
 ip : {0}
 login : {1}
 pass : {2}
-protocole : ftp
+protocol : ftp
 """
 
 	def __init__(self,params,Mysql,Linux) :
@@ -18,7 +18,7 @@ protocole : ftp
 		self.__Linux = Linux
 		self.__Mysql = Mysql
 		try :
-			self.__Mysql.mysqlInstance.database="`{0}`".format(Pureftp.__pureftpDatabase)
+			self.__Mysql.mysqlInstance.select_db(Pureftp.__pureftpDatabase)
 		except	:
 			print("Unknown database 'pureftpd'")
 			exit()

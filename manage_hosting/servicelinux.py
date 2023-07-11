@@ -14,7 +14,7 @@ class Linux :
 			subprocess.call(command, shell=True)
 
 	def generateRandomString(self,size) :
-		return ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(size)])
+		return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(size)])
 
 	def getUid(self) :
 		return pwd.getpwnam(self.__params.get('account')).pw_uid
