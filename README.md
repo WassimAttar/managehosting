@@ -8,7 +8,7 @@ Command-line program to create web hosting : ssh, ftp, mysql etc... accounts and
 
 ### DESCRIPTION
 **managehosting** is a commande-line program to easly create web hosting for applications.
-Works with python 2.
+Works with python 3.
 
 To run, below services must be installed on a linux box
  - apache
