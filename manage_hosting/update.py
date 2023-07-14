@@ -20,8 +20,8 @@ class Update :
 	def update(self) :
 		parsedjson = json.loads(self.__data)
 		newversion = parsedjson[0]["tag_name"]
-		if newversion == self.__params.get("version") :
-			print('managehosting is up-to-date (' + self.__params.get("version") + ')')
+		if newversion == self.__params["version"] :
+			print('managehosting is up-to-date (' + self.__params["version"] + ')')
 			exit()
 
 		if parsedjson[0]["assets"][0]["name"] == "managehosting" :

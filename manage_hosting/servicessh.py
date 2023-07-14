@@ -4,8 +4,7 @@ import crypt
 
 class Ssh :
 
-	__hostingPath = "/home/"
-	__hostingPathVhost = "/var/www/"
+	__documentRootVar = "/var/www/"
 
 	__createConfTemplate = """
 ssh :
@@ -18,37 +17,26 @@ pass : {2}
 		self.__params = params
 		self.__Linux = Linux
 
-	@staticmethod
-	def getHostingPath(account) :
-		return "{0}{1}".format(Ssh.__hostingPath,account)
-
-	@staticmethod
-	def getHostingPathVhost(account,domain) :
-		if domain == "" :
-			return "{0}{1}".format(Ssh.__hostingPathVhost,account)
-		else :
-			return Ssh.getHostingPath(account)
-
-	@staticmethod
-	def getdocumentRootVhost(documentRoot,domain) :
-		if domain == "" :
-			return ""
-		else :
-			return documentRoot
-
 	def exist(self):
 		return ""
 
 	def create(self):
-		sshPassword = self.__Linux.generateRandomString(12)
+		if self.__params["sshPassword"] == "" :
+			sshPassword = self.__Linux.generateRandomString(12)
+		else :
+			sshPassword = self.__params["sshPassword"]
 		salt = self.__Linux.generateRandomString(10)
-		password = "--password '{0}'".format(crypt.crypt(sshPassword, '$6${0}'.format(salt)))
-		self.__Linux.createUser("/bin/bash",password)
+		sshPasswordEncrypted = "--password '{0}'".format(crypt.crypt(sshPassword, '$6${0}'.format(salt)))
+
+		self.__Linux.createUser("/bin/bash",sshPasswordEncrypted)
+
 		if self.__params.get("domain") == "" :
-			self.__Linux.executeShellCommand("ln -s "+self.__params["hostingPath"]+self.__params["documentRoot"]+" "+Ssh.__hostingPathVhost+self.__params.get("account"))
-		return Ssh.__createConfTemplate.format(self.__params.get('ip'),self.__params.get('account'),sshPassword)
+			self.__Linux.executeShellCommand("ln -s "+self.__params["documentRoot"]+" "+Ssh.__documentRootVar+self.__params["account"])
+
+		return Ssh.__createConfTemplate.format(self.__params["ip"],self.__params["account"],sshPassword)
 
 	def delete(self):
-		self.__Linux.executeShellCommand("unlink "+Ssh.__hostingPathVhost+self.__params.get("account"))
+		self.__Linux.executeShellCommand("pkill -u "+self.__params["account"])
+		self.__Linux.executeShellCommand("unlink "+self.__params["openBaseDir"])
 		self.__Linux.deleteUser()
 		return ""

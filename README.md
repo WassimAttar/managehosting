@@ -24,8 +24,10 @@ classes for nginx, proftpd, postgres, etc... are easy to create.
     --account				The account name of the hosting.
     --domain				The domain name of the hosting.
     --withwww				Adds www. to the domain name.
+	--withhttps				Adds https to the domain name.
     --withsql				Creates the Mysql account.
-    --withftp				Creates the Pureftp account.
+    --withftp				Creates the chrooted Pureftp account.
+	--withsftp				Creates the chrooted sftp account.
     --withssh				Creates the ssh/sftp account.
     --create				Create accounts.
     --delete				Delete accounts.
@@ -35,16 +37,16 @@ classes for nginx, proftpd, postgres, etc... are easy to create.
     -U						Update to latest release.
 
 ### USE CASES
-Create hosting for the domain www.johndoe.com with ftp and mysql accounts
+Create hosting for the domain www.johndoe.com with sftp and mysql accounts
 
-    ./managehosting --account johndoe --domain johndoe.com --withwww --withsql --withftp --create --execute
+    ./managehosting --account johndoe --domain johndoe.com --withwww --withsql --withsftp --create --execute
 
 Output
 
 		##########################
 		http://www.johndoe.com
 
-		ftp :
+		sftp :
 		ip : xxx.xxx.xxx.xxx
 		login : johndoe
 		pass : Jf29ufOYALAL
@@ -76,7 +78,7 @@ Output
 		pass : dD1M1TXEWGKX
 		##########################
 
-Create hosting for a static application for the domain johndoe.com with only ftp account
+Create hosting for a static application for the domain johndoe.com with only sftp account
 
     ./managehosting --account johndoe --domain johndoe.com --withftp --create --execute
 
@@ -93,7 +95,7 @@ Output
 
 Create hosting without domain name but with ssh/sftp and mysql accounts
 
-    ./managehosting --account johndoe --withsql --withssh --documentroot /www --create --execute
+    ./managehosting --account johndoe --withsql --withssh --create --execute
 
 Output
 

@@ -23,19 +23,19 @@ Compte {1} et Domaine {0} supprimés
 		self.__params = params
 
 	def create(self,text) :
-		if self.__params.get("withwww") :
-			domain = "www.{0}".format(self.__params.get("domain"))
-			url = "http://{0}".format(domain)
+		if self.__params["withwww"] :
+			domain = "www."+self.__params["domain"]
+			url = "http://"+domain
 		else :
-			if self.__params.get("domain") == "" :
-				domain = "http://{0}/{1}".format(self.__params.get("ip"),self.__params.get("account"))
+			if self.__params["domain"] == "" :
+				domain = "http://{0}/{1}".format(self.__params["ip"],self.__params["account"])
 				url = domain
 			else :
-				domain = self.__params.get("domain")
-				url = "http://{0}".format(domain)
+				domain = self.__params["domain"]
+				url = "http://"+domain
 		return DisplayConf.__createConfTemplate.format(domain,url,text)
 
 	def delete(self,text) :
-		conf = DisplayConf.__deleteConfTemplate.format(self.__params.get("domain"),self.__params.get("account"))
+		conf = DisplayConf.__deleteConfTemplate.format(self.__params["domain"],self.__params["account"])
 		conf += text
 		return conf

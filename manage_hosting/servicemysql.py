@@ -63,38 +63,41 @@ chmod 600 {0}""".format(Mysql.__mysqlConfFile))
 
 	def __mysqlUserExists(self) :
 		cursor = self.mysqlInstance.cursor()
-		return self.executeSqlRequest(cursor,"select User from mysql.user where User = '{0}'".format(self.__params.get("account")))
+		return self.executeSqlRequest(cursor,"select User from mysql.user where User = '{0}'".format(self.__params["account"]))
 
 
 	def exist(self):
 		if self.__mysqlUserExists() :
-			return "mysql user {0} already exists\n".format(self.__params.get("account"))
+			return "mysql user {0} already exists\n".format(self.__params["account"])
 		return ""
 
 	def create(self) :
-		mysqlPassword = self.__Linux.generateRandomString(12)
+		if self.__params["sqlPassword"] == "" :
+			mysqlPassword = self.__Linux.generateRandomString(12)
+		else :
+			mysqlPassword = self.__params["sqlPassword"]
 		queries = ("CREATE USER '{0}'@'localhost' IDENTIFIED BY '{1}'",
                     "GRANT USAGE ON * . * TO '{0}'@'localhost' IDENTIFIED BY '{1}' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0",
                     "CREATE DATABASE IF NOT EXISTS `{0}`",
                     "GRANT ALL PRIVILEGES ON `{0}` . * TO '{0}'@'localhost'")
 		for query in queries :
-			query = query.format(self.__params.get("account"),mysqlPassword)
-			if self.__params.get("verbose") :
+			query = query.format(self.__params["account"],mysqlPassword)
+			if self.__params["verbose"] :
 				print(query)
-			if self.__params.get("execute") :
+			if self.__params["execute"] :
 				cursor = self.mysqlInstance.cursor()
 				cursor.execute(query)
-			return Mysql.__createConfTemplate.format(self.__params.get('ip'),self.__params.get('account'),mysqlPassword)
+		return Mysql.__createConfTemplate.format(self.__params["ip"],self.__params["account"],mysqlPassword)
 
 	def delete(self) :
 		queries = ("DROP USER '{0}'@'localhost'",
-                           "DROP DATABASE IF EXISTS `{0}`"
+                    "DROP DATABASE IF EXISTS `{0}`"
 			)
 		for query in queries :
-			query = query.format(self.__params.get("account"))
-			if self.__params.get("verbose") :
+			query = query.format(self.__params["account"])
+			if self.__params["verbose"] :
 				print(query)
-			if self.__params.get("execute") :
+			if self.__params["execute"] :
 				try :
 					cursor = self.mysqlInstance.cursor()
 					cursor.execute(query)
