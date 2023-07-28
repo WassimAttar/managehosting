@@ -15,28 +15,34 @@ class Rights :
 			self.__Linux.executeShellCommand("sh "+self.__rights)
 
 	def exist(self):
-		cmd = "chown -R {0}:{0} {1}".format(self.__params["account"],self.__params["documentRoot"])
-		file = open(Rights.__rights, 'r+')
-		content = file.read()
-		if content.find(cmd) == -1 :
-			return ""
-		else :
+		with open(Rights.__rights, "r") as file:
+			content = file.read()
+		if content.find(self.__params["account"]) != -1 :
 			self.__exist = True
 			return "Rights {0} already exists\n".format(self.__params["account"])
+		else:
+			return ""
 
 	def create(self):
-		cmd = "chown -R {0}:{0} {1}".format(self.__params["account"],self.__params["documentRoot"])
+		template = ""
+		for command in self.__params["rightsCommands"] :
+			cmd = command.format(account=self.__params["account"], openBaseDir=self.__params["openBaseDir"], documentRoot=self.__params["documentRoot"])
+			template += cmd+"\n"
 		if self.__params["verbose"] :
-			print(cmd)
+			print(template)
 		if self.__params["execute"] :
-			file = open(Rights.__rights, 'r+')
-			content = file.read()
-			file.seek(0, 0)
-			file.write(cmd+"\n"+content)
-			file.close()
+			with open(Rights.__rights, "w") as file:
+				file.seek(0, 0)
+				file.write(template+"\n")
 		return ""
 
 	def delete(self):
-		text = "chown -R {0}:{0}".format(self.__params["account"])
-		self.__Linux.executeShellCommand("sed -i '/{0}/d' {1}".format(text,Rights.__rights))
-		return ""
+		content = ""
+		with open(Rights.__rights, "r") as file:
+			lines = file.readlines()
+			for line in lines:
+				if line.find(self.__params["account"]) == -1 :
+					content += line
+		with open(Rights.__rights, "w") as file:
+			file.write(content)
+		return "Rights {0} deleted\n".format(self.__params["account"])

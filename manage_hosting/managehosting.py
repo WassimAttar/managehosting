@@ -4,7 +4,6 @@ import argparse, socket
 
 from servicelinux import Linux
 from servicemysql import Mysql
-from servicepureftp import Pureftp
 from servicessh import Ssh
 from servicesftp import Sftp
 from serviceapache2 import Apache2
@@ -22,8 +21,6 @@ parser.add_argument('-c', '--create', action='count', default=0, help='Create Ho
 parser.add_argument('-d', '--delete', action='count', default=0, help='Delete Hosting')
 parser.add_argument('-n', '--withsql', action='count', default=0, help='With Sql')
 parser.add_argument('-sp', '--sqlpassword', type=str, default="", help='Sql Password')
-parser.add_argument('-f', '--withftp', action='count', default=0, help='With Ftp')
-parser.add_argument('-fp', '--ftppassword', type=str, default="", help='Ftp Password')
 parser.add_argument('-sf', '--withsftp', action='count', default=0, help='With Sftp')
 parser.add_argument('-sfp', '--sftppassword', type=str, default="", help='Sftp Password')
 parser.add_argument('-s', '--withssh', action='count', default=0, help='With Ssh')
@@ -38,16 +35,16 @@ if args.version :
 	print(__version__)
 	exit()
 
+if (args.domain == "" or args.account == "") and (args.create > 0 or args.delete > 0) :
+	print("Please choose --account and --domain")
+	exit()
+
 if args.withsftp > 0 and args.withssh > 0 and args.create > 0 :
 	print("Please choose --withsftp or --withssh")
 	exit()
 
-if args.withftp == 0 and args.withsftp == 0 and args.withssh == 0 and args.create > 0 :
+if args.withsftp == 0 and args.withssh == 0 and args.create > 0 :
 	print("Please choose a hosting option. Ex : --withsftp")
-	exit()
-
-if args.account == "" and args.update == False :
-	print("Please choose an account.")
 	exit()
 
 if args.create == 0 and args.delete == 0 and args.update == False :
@@ -58,11 +55,8 @@ if args.create == 0 and args.delete == 0 and args.update == False :
 params = {}
 params["version"] = __version__
 params["account"] = args.account
+params["domain"] = args.domain
 
-if args.domain == "" :
-	params["domain"] = ""
-else :
-	params["domain"] = args.domain
 if args.verbose == 0 :
 	params["verbose"] = False
 else :
@@ -98,20 +92,15 @@ if args.sftppassword == "" :
 else :
 	params["sftpPassword"] = args.sftppassword
 
-if args.ftppassword == "" :
-	params["ftpPassword"] = ""
-else :
-	params["ftpPassword"] = args.ftppassword
-
-
-if args.withftp > 0 or args.delete > 0 :
-	params["openBaseDir"] = "/var/www/"+params["account"]
-	params["documentRoot"] = params["openBaseDir"]
-
-
-if args.withssh > 0 or args.withsftp > 0 :
+if args.withssh > 0 or args.withsftp > 0 or args.delete > 0 :
 	params["openBaseDir"] = "/home/"+params["account"]
 	params["documentRoot"] = params["openBaseDir"]+"/www"
+
+if args.withssh > 0 :
+	params["rightsCommands"] = ["chown {account}:{account} -R {openBaseDir}","chmod -R 700 {openBaseDir}"]
+if args.withsftp > 0 :
+	params["rightsCommands"] = ["chown -R root:root {openBaseDir}", "chmod 755 -R {openBaseDir}", "chmod 711 -R {documentRoot}",
+	             "chown {account}:{account} -R {documentRoot}"]
 
 
 if args.create > 0 :
@@ -139,12 +128,6 @@ if args.update :
 if args.withsql > 0 or args.delete > 0 :
 	mysqlInstance = Mysql(params,linuxInstance)
 	services.append(mysqlInstance)
-
-if args.withftp > 0 or args.delete > 0 :
-	if args.withsql == 0 :
-		mysqlInstance = Mysql(params,linuxInstance)
-	pureftpInstance = Pureftp(params,mysqlInstance,linuxInstance)
-	services.append(pureftpInstance)
 
 if args.withsftp > 0 or args.delete > 0 :
 	sftpInstance = Sftp(params,linuxInstance)

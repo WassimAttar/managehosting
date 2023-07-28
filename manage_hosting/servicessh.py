@@ -29,14 +29,11 @@ pass : {2}
 		sshPasswordEncrypted = "--password '{0}'".format(crypt.crypt(sshPassword, '$6${0}'.format(salt)))
 
 		self.__Linux.createUser("/bin/bash",sshPasswordEncrypted)
-
-		if self.__params.get("domain") == "" :
-			self.__Linux.executeShellCommand("ln -s "+self.__params["documentRoot"]+" "+Ssh.__documentRootVar+self.__params["account"])
+		self.__Linux.executeShellCommand("mkdir "+self.__params["documentRoot"])
 
 		return Ssh.__createConfTemplate.format(self.__params["ip"],self.__params["account"],sshPassword)
 
 	def delete(self):
 		self.__Linux.executeShellCommand("pkill -u "+self.__params["account"])
-		self.__Linux.executeShellCommand("unlink "+self.__params["openBaseDir"])
 		self.__Linux.deleteUser()
 		return ""

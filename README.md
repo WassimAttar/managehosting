@@ -1,6 +1,6 @@
 # ManageHosting
 
-Command-line program to create web hosting : ssh, ftp, mysql etc... accounts and apache virtualhosts
+Command-line program to create web hosting : ssh, sftp, mysql etc... accounts and apache virtualhosts
 
 - [DESCRIPTION](#description)
 - [OPTIONS](#options)
@@ -13,7 +13,7 @@ Works with python 3.
 To run, below services must be installed on a linux box
  - apache
  - mysql
- - pureftp
+ - sftp
  - phpmyadmin
 
 Each service has its own class so it can be extensible.
@@ -26,7 +26,6 @@ classes for nginx, proftpd, postgres, etc... are easy to create.
     --withwww				Adds www. to the domain name.
 	--withhttps				Adds https to the domain name.
     --withsql				Creates the Mysql account.
-    --withftp				Creates the chrooted Pureftp account.
 	--withsftp				Creates the chrooted sftp account.
     --withssh				Creates the ssh/sftp account.
     --create				Create accounts.
@@ -80,59 +79,18 @@ Output
 
 Create hosting for a static application for the domain johndoe.com with only sftp account
 
-    ./managehosting --account johndoe --domain johndoe.com --withftp --create --execute
+    ./managehosting --account johndoe --domain johndoe.com --withsftp --create --execute
 
 Output
 
 		##########################
 		http://johndoe.com
 
-		ftp :
+		sftp :
 		ip : xxx.xxx.xxx.xxx
 		login : johndoe
 		pass : Jf29ufOYALAL
 		##########################
-
-Create hosting without domain name but with ssh/sftp and mysql accounts
-
-    ./managehosting --account johndoe --withsql --withssh --create --execute
-
-Output
-
-		##########################
-		http://xxx.xxx.xxx.xxx/johndoe
-
-		ssh :
-		ip : xxx.xxx.xxx.xxx
-		login : johndoe
-		pass : Jf29ufOYALAL
-
-		Database :
-		http://xxx.xxx.xxx.xxx/phpmyadmin/
-		login : johndoe
-		pass : dD1M1TXEWGKX
-		##########################
-
-Create hosting without domain name but with ftp and mysql accounts
-
-    ./managehosting --account johndoe --withsql --withftp --create --execute
-
-Output
-
-		##########################
-		http://xxx.xxx.xxx.xxx/johndoe
-
-		ftp :
-		ip : xxx.xxx.xxx.xxx
-		login : johndoe
-		pass : Jf29ufOYALAL
-
-		Database :
-		http://xxx.xxx.xxx.xxx/phpmyadmin/
-		login : johndoe
-		pass : dD1M1TXEWGKX
-		##########################
-
 
 Delete hosting for the domain www.johndoe.com
 
@@ -152,7 +110,7 @@ Get version
 
 Output
 
-    2016.06.29
+    2023.07.14
 
 Update to latest release
 
@@ -160,5 +118,5 @@ Update to latest release
 
 Output
 
-    Updating to version 2016.06.30
+    Updating to version 2023.07.14
     Updated managehosting. Restart managehosting to use the new version.

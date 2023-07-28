@@ -27,12 +27,8 @@ Compte {1} et Domaine {0} supprimés
 			domain = "www."+self.__params["domain"]
 			url = "http://"+domain
 		else :
-			if self.__params["domain"] == "" :
-				domain = "http://{0}/{1}".format(self.__params["ip"],self.__params["account"])
-				url = domain
-			else :
-				domain = self.__params["domain"]
-				url = "http://"+domain
+			domain = self.__params["domain"]
+			url = "http://"+domain
 		return DisplayConf.__createConfTemplate.format(domain,url,text)
 
 	def delete(self,text) :

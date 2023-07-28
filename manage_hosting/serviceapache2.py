@@ -37,29 +37,11 @@ class Apache2() :
 </VirtualHost>
 """
 
-	__apacheTemplateNoDomain = """
-<Directory {0}>
-  AssignUserId {1} {1}
-  php_admin_value open_basedir "{2}/:/tmp/"
-
-  Options -Indexes
-  AllowOverride All
-  Require all granted
-</Directory>
-
-<DirectoryMatch "{0}/(cache|upload)/">
-  php_flag engine off
-</DirectoryMatch>
-"""
-
 	def __init__(self,params,Linux):
 		self.__exist = False
 		self.__params = params
 		self.__Linux = Linux
-		if self.__params["domain"] == "" :
-			self.__confFile = self.__params["account"]
-		else :
-			self.__confFile = self.__params["domain"]
+		self.__confFile = self.__params["domain"]
 		self.__apacheConfFile = self.__confFile+".conf"
 		self.__apacheConfFileHttps = self.__confFile+"-le-ssl.conf"
 
@@ -90,12 +72,8 @@ class Apache2() :
 		else :
 			serverAlias = ""
 
-		self.__Linux.executeShellCommand("mkdir "+self.__params["documentRoot"])
+		apacheConf = Apache2.__apacheTemplate.format(self.__params["documentRoot"],self.__params["account"],self.__params["domain"],serverAlias,self.__params["openBaseDir"])
 
-		if self.__params["domain"] == "" :
-			apacheConf = Apache2.__apacheTemplateNoDomain.format(self.__params["documentRoot"],self.__params["account"],self.__params["openBaseDir"])
-		else :
-			apacheConf = Apache2.__apacheTemplate.format(self.__params["documentRoot"],self.__params["account"],self.__params["domain"],serverAlias,self.__params["openBaseDir"])
 		if self.__params["verbose"] :
 			print(apacheConf)
 		if self.__params["execute"] :
@@ -107,7 +85,7 @@ class Apache2() :
 		if self.__params["withhttps"] :
 			cmd = "certbot -n --apache -d "+self.__params["domain"]
 			if self.__params["withwww"] :
-				cmd += "-d www."+self.__params["domain"]
+				cmd += " -d www."+self.__params["domain"]
 			self.__Linux.executeShellCommand(cmd)
 
 		return ""

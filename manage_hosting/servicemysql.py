@@ -53,21 +53,24 @@ Protect this file
 chmod 600 {0}""".format(Mysql.__mysqlConfFile))
 			exit()
 
-	def executeSqlRequest(self,cursor,request) :
-		cursor.execute(request)
-		result=cursor.fetchone()
-		if result != None :
-			return True
-		else :
+	def executeSqlRequest(self,query) :
+		if self.__params["verbose"] :
+			print(query)
+		if self.__params["execute"] :
+			try :
+				cursor = self.mysqlInstance.cursor()
+				cursor.execute(query)
+				result = cursor.fetchone()
+			except :
+				result = None
+		if result == None :
 			return False
-
-	def __mysqlUserExists(self) :
-		cursor = self.mysqlInstance.cursor()
-		return self.executeSqlRequest(cursor,"select User from mysql.user where User = '{0}'".format(self.__params["account"]))
-
+		else :
+			return True
 
 	def exist(self):
-		if self.__mysqlUserExists() :
+		query = "select User from mysql.user where User = '{0}'".format(self.__params["account"])
+		if self.executeSqlRequest(query) :
 			return "mysql user {0} already exists\n".format(self.__params["account"])
 		return ""
 
@@ -82,25 +85,14 @@ chmod 600 {0}""".format(Mysql.__mysqlConfFile))
                     "GRANT ALL PRIVILEGES ON `{0}` . * TO '{0}'@'localhost'")
 		for query in queries :
 			query = query.format(self.__params["account"],mysqlPassword)
-			if self.__params["verbose"] :
-				print(query)
-			if self.__params["execute"] :
-				cursor = self.mysqlInstance.cursor()
-				cursor.execute(query)
+			self.executeSqlRequest(query)
+
 		return Mysql.__createConfTemplate.format(self.__params["ip"],self.__params["account"],mysqlPassword)
 
 	def delete(self) :
 		queries = ("DROP USER '{0}'@'localhost'",
-                    "DROP DATABASE IF EXISTS `{0}`"
-			)
+                    "DROP DATABASE IF EXISTS `{0}`")
 		for query in queries :
 			query = query.format(self.__params["account"])
-			if self.__params["verbose"] :
-				print(query)
-			if self.__params["execute"] :
-				try :
-					cursor = self.mysqlInstance.cursor()
-					cursor.execute(query)
-				except :
-					print("Base déjà supprimée")
-			return ""
+			self.executeSqlRequest(query)
+		return ""
