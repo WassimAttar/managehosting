@@ -4,8 +4,6 @@ import argparse, socket
 
 from servicelinux import Linux
 from servicemysql import Mysql
-from servicessh import Ssh
-from servicesftp import Sftp
 from serviceapache2 import Apache2
 from rights import Rights
 from displayconf import DisplayConf
@@ -22,7 +20,6 @@ parser.add_argument('-d', '--delete', action='count', default=0, help='Delete Ho
 parser.add_argument('-n', '--withsql', action='count', default=0, help='With Sql')
 parser.add_argument('-sp', '--sqlpassword', type=str, default="", help='Sql Password')
 parser.add_argument('-sf', '--withsftp', action='count', default=0, help='With Sftp')
-parser.add_argument('-sfp', '--sftppassword', type=str, default="", help='Sftp Password')
 parser.add_argument('-s', '--withssh', action='count', default=0, help='With Ssh')
 parser.add_argument('-ssp', '--sshpassword', type=str, default="", help='Ssh Password')
 parser.add_argument('-ht', '--withhttps', action='count', default=0, help='With Https')
@@ -87,20 +84,19 @@ if args.sshpassword == "" :
 else :
 	params["sshPassword"] = args.sshpassword
 
-if args.sftppassword == "" :
-	params["sftpPassword"] = ""
-else :
-	params["sftpPassword"] = args.sftppassword
-
 if args.withssh > 0 or args.withsftp > 0 or args.delete > 0 :
 	params["openBaseDir"] = "/home/"+params["account"]
 	params["documentRoot"] = params["openBaseDir"]+"/www"
 
 if args.withssh > 0 :
 	params["rightsCommands"] = ["chown {account}:{account} -R {openBaseDir}","chmod -R 700 {openBaseDir}"]
+	params["shell"] = "/bin/bash"
+	params["protocol"] =  "ssh"
 if args.withsftp > 0 :
 	params["rightsCommands"] = ["chown -R root:root {openBaseDir}", "chmod 755 -R {openBaseDir}", "chmod 711 -R {documentRoot}",
 	             "chown {account}:{account} -R {documentRoot}"]
+	params["shell"] = "/bin/false"
+	params["protocol"] =  "sftp"
 
 
 if args.create > 0 :
@@ -117,25 +113,18 @@ params["ip"] = [(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for 
 
 services = []
 
-linuxInstance = Linux(params)
-services.append(linuxInstance)
-
 if args.update :
 	updateInstance = Update(params)
 	updateInstance.update()
 	exit()
 
+if args.withssh > 0 or args.withsftp > 0 or args.delete > 0 :
+	linuxInstance = Linux(params)
+	services.append(linuxInstance)
+
 if args.withsql > 0 or args.delete > 0 :
 	mysqlInstance = Mysql(params,linuxInstance)
 	services.append(mysqlInstance)
-
-if args.withsftp > 0 or args.delete > 0 :
-	sftpInstance = Sftp(params,linuxInstance)
-	services.append(sftpInstance)
-
-if args.withssh > 0 or args.delete > 0 :
-	sshInstance = Ssh(params,linuxInstance)
-	services.append(sshInstance)
 
 rightsInstance = Rights(params,linuxInstance)
 apache2Instance = Apache2(params,linuxInstance)

@@ -1,8 +1,15 @@
 # coding: utf-8
 
-import os, subprocess, string, random, pwd
+import os, subprocess, string, random, pwd, crypt
 
 class Linux :
+
+	__createConfTemplate = """
+{3} :
+ip : {0}
+login : {1}
+pass : {2}
+"""
 
 	def __init__(self,params) :
 		self.__params = params
@@ -16,9 +23,6 @@ class Linux :
 	def generateRandomString(self,size) :
 		return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(size)])
 
-	def getUid(self) :
-		return pwd.getpwnam(self.__params["account"]).pw_uid
-
 	def __linuxUserExists(self) :
 		try:
 			pwd.getpwnam(self.__params["account"])
@@ -26,11 +30,11 @@ class Linux :
 		except KeyError:
 			return False
 
-	def createUser(self,shell,password) :
+	def __createUser(self,shell,password) :
 		self.executeShellCommand("useradd --home {0} --create-home -s {2} {3} {1}".format(self.__params["openBaseDir"],self.__params["account"],shell,password))
 		return True
 
-	def deleteUser(self) :
+	def __deleteUser(self) :
 		self.executeShellCommand("userdel -f -r "+self.__params["account"])
 		return True
 
@@ -43,7 +47,22 @@ class Linux :
 		return display
 
 	def create(self):
-		return ""
+		if self.__params["sshPassword"] == "" :
+			password = self.generateRandomString(12)
+		else :
+			password = self.__params["sshPassword"]
+		salt = self.generateRandomString(10)
+		passwordEncrypted = "--password '{0}'".format(crypt.crypt(password, '$6${0}'.format(salt)))
+
+		self.__createUser(self.__params["shell"],passwordEncrypted)
+		self.executeShellCommand("mkdir "+self.__params["documentRoot"])
+
+		if self.__params["protocol"] == "sftp" :
+			self.executeShellCommand("usermod -a -G sftpjail "+self.__params["account"])
+
+		return self.__createConfTemplate.format(self.__params["ip"],self.__params["account"],password,self.__params["protocol"])
 
 	def delete(self):
+		self.executeShellCommand("pkill -u "+self.__params["account"])
+		self.__deleteUser()
 		return ""
