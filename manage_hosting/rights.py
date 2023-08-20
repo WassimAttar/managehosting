@@ -31,8 +31,7 @@ class Rights :
 		if self.__params["verbose"] :
 			print(template)
 		if self.__params["execute"] :
-			with open(Rights.__rights, "w") as file:
-				file.seek(0, 0)
+			with open(Rights.__rights, "a") as file:
 				file.write(template+"\n")
 		return ""
 
